@@ -32,7 +32,7 @@ Verifique se tem as seguintes ferramentas instaladas:
 1.  **Clone o Repositório:**
     Abra seu terminal ou prompt de comando e execute:
     ```bash
-    git clone [https://github.com/Willygonzaga/app_cotacao](https://github.com/Willygonzaga/app_cotacao)
+    git clone https://github.com/Willygonzaga/app_cotacao
     cd app_cotacao
     ```
 
