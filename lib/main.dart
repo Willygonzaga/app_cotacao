@@ -14,9 +14,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'App Cotação',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue.shade700, // Tom de azul predominante
+          brightness: Brightness.light,
+          primary: Colors.blue.shade700,
+          onPrimary: Colors.white,
+          secondary: Colors.blue.shade200,
+          onSecondary: Colors.black,
+        ),
+        useMaterial3: true,
       ),
       home: const MyHomePage(title: 'App Cotação'),
     );
@@ -59,21 +67,30 @@ class MyHomePage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final currencyCode = currencies[index].key;
                 final rate = currencies[index].value;
-                return ListTile(
-                  title: Text(currencyCode),
-                  subtitle: Text('1 USD = ${rate.toStringAsFixed(4)} $currencyCode'),
-                  // AQUI ESTÁ A LÓGICA DE NAVEGAÇÃO
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailScreen(
-                          currencyCode: currencyCode,
-                          rate: rate.toDouble(), // Converte para double para garantir o tipo correto
+                return Card( // Envolve o ListTile em um Card
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Adiciona margem
+                  elevation: 4, // Adiciona uma sombra para o efeito de "cartão"
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Bordas arredondadas
+                  child: ListTile(
+                    leading: const Icon(Icons.currency_exchange, color: Colors.blueGrey), // Ícone à esquerda
+                    title: Text(
+                      currencyCode,
+                      style: const TextStyle(fontWeight: FontWeight.bold), // Texto do título em negrito
+                    ),
+                    subtitle: Text('1 USD = ${rate.toStringAsFixed(4)} $currencyCode'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16), // Ícone de seta para indicar clicável
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailScreen(
+                            currencyCode: currencyCode,
+                            rate: rate.toDouble(),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               },
             );
