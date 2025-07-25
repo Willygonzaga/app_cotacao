@@ -56,4 +56,4 @@ Verifique se tem as seguintes ferramentas instaladas:
 
 ## Autor
 
-[Willy Gonzaga Balieiro]
+Willy Gonzaga Balieiro
