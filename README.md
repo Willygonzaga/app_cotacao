@@ -1,13 +1,12 @@
 # App Cotação de Moedas
 
-Este é um aplicativo Flutter desenvolvido como parte de um desafio técnico para exibir cotações de moedas em tempo real. Ele consome dados de uma API externa e apresenta as informações de forma clara e organizada, seguindo os princípios do Material Design.
+Aplicativo Flutter desenvolvido para exibir cotações de moedas em tempo real. Ele consome dados de uma API externa e apresenta as informações na tela.
 
 ## Funcionalidades
 
-* **Lista de Cotações:** Exibe uma lista de diversas moedas com suas respectivas cotações em relação ao Dólar Americano (USD).
-* **Detalhes da Moeda:** Ao clicar em um item da lista, o usuário é levado a uma tela de detalhes com informações mais aprofundadas sobre a moeda selecionada.
+* **Lista de Cotações:** Mostra uma lista de moedas com suas respectivas cotações em relação ao Dólar Americano (USD).
+* **Detalhes da Moeda:** Ao clicar em um item da lista, uma tela de detalhes aparece com mais informações sobre a moeda.
 * **Consumo de API:** Integração com a `ExchangeRate-API` para obter dados de cotação atualizados.
-* **Interface Amigável:** Design limpo e intuitivo, utilizando componentes do Material Design e um tema de cores alinhado com o padrão da empresa.
 
 ## Tecnologias Utilizadas
 
@@ -21,10 +20,10 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina:
 
 ### Pré-requisitos
 
-Certifique-se de ter as seguintes ferramentas instaladas:
+Verifique se tem as seguintes ferramentas instaladas:
 
 * **Flutter SDK:** [Instruções de instalação](https://flutter.dev/docs/get-started/install)
-* **IDE (Visual Studio Code recomendado):** Com as extensões Flutter e Dart instaladas.
+* **IDE (Utilizei o Visual Studio Code):** Com as extensões Flutter e Dart instaladas.
 * **Um emulador Android/iOS ou um dispositivo físico:** Para rodar o aplicativo.
 
 ### Passos para Execução
@@ -53,7 +52,7 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 
 * `lib/main.dart`: Ponto de entrada do aplicativo, contém a `MyHomePage` (lista de cotações) e a configuração do tema.
 * `lib/services/api_service.dart`: Responsável por fazer as requisições à `ExchangeRate-API`.
-* `lib/screens/detail_screen.dart`: Tela que exibe os detalhes de uma moeda selecionada.
+* `lib/screens/detalhes_screen.dart`: Tela que exibe os detalhes de uma moeda selecionada.
 
 ## Autor
 
