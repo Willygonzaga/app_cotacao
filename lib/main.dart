@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:app_cotacao/services/api_service.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -7,27 +9,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'App Cotação'),
@@ -35,28 +21,55 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(title),
       ),
-      body: const Center(
-        child: Text(
-          'Bem-vindo ao Cotação App!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: ApiService.fetchCurrencies(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Enquanto estiver carregando, exibe um indicador de progresso
+            return const Center(child: CircularProgressIndicator());
+          } 
+          else if (snapshot.hasError) {
+            // Se ocorrer um erro, exibe uma mensagem
+            return const Center(child: Text('Erro ao carregar as cotações.'));
+          } 
+          else if (snapshot.hasData && snapshot.data != null) {
+            final Map<String, dynamic> conversionRates = snapshot.data!;
+            // Convertendo o mapa de taxas em uma lista de MapEntry para iterar
+            final List<MapEntry<String, dynamic>> currencies = conversionRates.entries.toList();
+
+            // Vamos ordenar as moedas pelo código para uma melhor visualização
+            currencies.sort((a, b) => a.key.compareTo(b.key));
+
+            return ListView.builder(
+              itemCount: currencies.length,
+              itemBuilder: (context, index) {
+                final currencyCode = currencies[index].key;
+                final rate = currencies[index].value;
+                return ListTile(
+                  title: Text(currencyCode), // Ex: BRL, EUR
+                  subtitle: Text('1 USD = $rate $currencyCode'), // Ex: 1 USD = 5.05 BRL
+                  // Você pode adicionar um ícone ou mais estilização aqui
+                );
+              },
+            );
+          }
+          else {
+            // Se não houver dados, exibe uma mensagem
+            return const Center(child: Text('Nenhuma cotação disponível.'));
+          }
+        },
       ),
     );
   }
