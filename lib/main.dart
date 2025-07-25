@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:app_cotacao/services/api_service.dart';
 
+import 'package:app_cotacao/screens/detalhes_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -58,9 +60,20 @@ class MyHomePage extends StatelessWidget {
                 final currencyCode = currencies[index].key;
                 final rate = currencies[index].value;
                 return ListTile(
-                  title: Text(currencyCode), // Ex: BRL, EUR
-                  subtitle: Text('1 USD = $rate $currencyCode'), // Ex: 1 USD = 5.05 BRL
-                  // Você pode adicionar um ícone ou mais estilização aqui
+                  title: Text(currencyCode),
+                  subtitle: Text('1 USD = ${rate.toStringAsFixed(4)} $currencyCode'),
+                  // AQUI ESTÁ A LÓGICA DE NAVEGAÇÃO
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(
+                          currencyCode: currencyCode,
+                          rate: rate.toDouble(), // Converte para double para garantir o tipo correto
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );
