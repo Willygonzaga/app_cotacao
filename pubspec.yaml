@@ -15,6 +15,8 @@ dependencies:
 
   http: ^1.4.0 # ADICIONEI ESSA LINHA
 
+  intl: ^0.20.2 # ADICIONEI ESSA LINHA
+
   cupertino_icons: ^1.0.8
 
 

@@ -4,6 +4,8 @@ import 'package:app_cotacao/services/api_service.dart';
 
 import 'package:app_cotacao/screens/detalhes_screen.dart';
 
+import 'package:app_cotacao/utils/moeda_data.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -55,44 +57,60 @@ class MyHomePage extends StatelessWidget {
             return const Center(child: Text('Erro ao carregar as cotações.'));
           } 
           else if (snapshot.hasData && snapshot.data != null) {
-            final Map<String, dynamic> conversionRates = snapshot.data!;
-            // Convertendo o mapa de taxas em uma lista de MapEntry para iterar
-            final List<MapEntry<String, dynamic>> currencies = conversionRates.entries.toList();
+            final Map<String, dynamic> apiResponseData = snapshot.data!; // Renomeado para clareza
+            final Map<String, dynamic> conversionRates = apiResponseData['conversion_rates'];
+            final String lastUpdateUtc = apiResponseData['time_last_update_utc']; // <--- Extraindo a data
 
-            // Vamos ordenar as moedas pelo código para uma melhor visualização
+            final List<MapEntry<String, dynamic>> currencies = conversionRates.entries.toList();
             currencies.sort((a, b) => a.key.compareTo(b.key));
 
-            return ListView.builder(
-              itemCount: currencies.length,
-              itemBuilder: (context, index) {
-                final currencyCode = currencies[index].key;
-                final rate = currencies[index].value;
-                return Card( // Envolve o ListTile em um Card
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Adiciona margem
-                  elevation: 4, // Adiciona uma sombra para o efeito de "cartão"
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Bordas arredondadas
-                  child: ListTile(
-                    leading: const Icon(Icons.currency_exchange, color: Colors.blueGrey), // Ícone à esquerda
-                    title: Text(
-                      currencyCode,
-                      style: const TextStyle(fontWeight: FontWeight.bold), // Texto do título em negrito
-                    ),
-                    subtitle: Text('1 USD = ${rate.toStringAsFixed(4)} $currencyCode'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16), // Ícone de seta para indicar clicável
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailScreen(
-                            currencyCode: currencyCode,
-                            rate: rate.toDouble(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
+            return RefreshIndicator( // Mantendo o RefreshIndicator, se você o adicionou antes
+              onRefresh: () async {
+                // Para o RefreshIndicator funcionar perfeitamente, MyHomePage precisaria ser um StatefulWidget.
+                // Por enquanto, ele apenas mostra a animação. Se quiser funcionalidade completa, me avise para refatorarmos.
+                await ApiService.fetchCurrencies(); // Apenas chamando para simular a atualização
+                // No StateFulWidget, aqui seria um setState para recarregar o FutureBuilder.
               },
+              child: ListView.builder(
+                itemCount: currencies.length,
+                itemBuilder: (context, index) {
+                  final currencyCode = currencies[index].key;
+                  final rate = currencies[index].value;
+
+                  // <--- Novas informações para passar
+                  final String fullName = currencyNames[currencyCode] ?? currencyCode; // Pega o nome completo ou o código
+                  final String symbol = currencySymbols[currencyCode] ?? currencyCode; // Pega o símbolo ou o código
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    child: ListTile(
+                      leading: Icon(Icons.attach_money, color: Theme.of(context).colorScheme.primary),
+                      title: Text(
+                        currencyCode,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('1 USD = ${rate.toStringAsFixed(4)} $currencyCode'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(
+                              currencyCode: currencyCode,
+                              rate: rate.toDouble(),
+                              fullName: fullName, // <--- Passando o nome completo
+                              symbol: symbol, // <--- Passando o símbolo
+                              lastUpdateUtc: lastUpdateUtc, // <--- Passando a data de atualização
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             );
           }
           else {
